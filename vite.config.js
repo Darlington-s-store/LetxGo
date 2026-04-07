@@ -4,6 +4,7 @@ import babel from '@rolldown/plugin-babel'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "/LetxGo/",
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] })
