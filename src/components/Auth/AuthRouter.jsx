@@ -1,106 +1,136 @@
 import React, { useState, useEffect } from 'react';
-import { OnboardingPage } from '../../pages/Onboarding/OnboardingPage';
-import { SignupPage } from '../../pages/Auth/SignupPage';
-import { EmailVerificationPage } from '../../pages/Auth/EmailVerificationPage';
-import { LoginPage } from '../../pages/Auth/LoginPage';
-import { DashboardPage } from '../../pages/Student/DashboardPage';
+import { RoleSelectionPage } from '../../pages/Auth/RoleSelectionPage';
+import { SignupStep1Page } from '../../pages/Auth/SignupStep1Page';
+import { SignupStep2Page } from '../../pages/Auth/SignupStep2Page';
+import { EmailVerificationPageNew } from '../../pages/Auth/EmailVerificationPageNew';
+import { PhoneVerificationPageNew } from '../../pages/Auth/PhoneVerificationPageNew';
+import { LoginPageNew } from '../../pages/Auth/LoginPageNew';
+import { DashboardPageNew } from '../../pages/Student/DashboardPageNew';
 import { ForgotPasswordPage } from '../../pages/Auth/ForgotPasswordPage';
-import { GoogleLoginPage } from '../../pages/Auth/GoogleLoginPage';
 import { lexgoStorage } from '../../utils/storage';
 
 export const AuthRouter = () => {
   const [currentPage, setCurrentPage] = useState(() => {
-    return localStorage.getItem('lexgo_auth_page') || 'onboarding';
+    return localStorage.getItem('lexgo_auth_page') || 'role-selection';
   });
 
+  const [userRole, setUserRole] = useState(
+    localStorage.getItem('lexgo_user_role') || null
+  );
+
+  const [step1Data, setStep1Data] = useState(null);
   const [verificationEmail, setVerificationEmail] = useState(
     localStorage.getItem('lexgo_auth_email') || ''
   );
 
   useEffect(() => {
     localStorage.setItem('lexgo_auth_page', currentPage);
+    if (userRole) {
+      localStorage.setItem('lexgo_user_role', userRole);
+    }
     if (verificationEmail) {
       localStorage.setItem('lexgo_auth_email', verificationEmail);
     } else {
       localStorage.removeItem('lexgo_auth_email');
     }
-  }, [currentPage, verificationEmail]);
+  }, [currentPage, userRole, verificationEmail]);
 
-  const handleNavigateToSignup = () => setCurrentPage('signup');
-  const handleNavigateToLogin = () => setCurrentPage('login');
-  const handleNavigateToForgotPassword = () => setCurrentPage('forgot-password');
-  const handleNavigateToGoogleLogin = () => setCurrentPage('google-login');
+  const handleRoleSelect = (role) => {
+    setUserRole(role);
+    setCurrentPage('signup-step1');
+  };
 
-  const handleSignupComplete = (formData) => {
+  const handleSignupStep1Complete = (formData) => {
+    setStep1Data(formData);
     setVerificationEmail(formData.email);
-    
-    // Store user data on signup
+    setCurrentPage('signup-step2');
+  };
+
+  const handleSignupStep2Complete = async (formData) => {
     lexgoStorage.saveUserProfile({
-      fullName: formData.fullName,
-      email: formData.email,
-      institution: formData.institution,
-      studentId: formData.studentId,
-      levelOfStudy: formData.levelOfStudy,
-      program: formData.program
+      ...formData,
+      role: userRole
     });
     
+    // For demo, go to email verification
     setCurrentPage('email-verification');
   };
 
-  const handleVerificationComplete = () => {
+  const handleEmailVerificationComplete = () => {
+    setCurrentPage('login');
+  };
+
+  const handlePhoneVerificationComplete = () => {
     setCurrentPage('login');
   };
 
   const handleLoginComplete = (userData) => {
     if (userData) {
-      lexgoStorage.saveUserProfile(userData);
+      lexgoStorage.saveUserProfile({
+        ...userData,
+        role: userRole
+      });
     }
     setCurrentPage('dashboard');
   };
 
   const handleLogout = () => {
-    // Clear state on logout
     localStorage.removeItem('lexgo_auth_page');
+    localStorage.removeItem('lexgo_user_role');
     localStorage.removeItem('lexgo_auth_email');
     lexgoStorage.clearAll();
-    setCurrentPage('login');
+    setCurrentPage('role-selection');
+    setUserRole(null);
+    setStep1Data(null);
   };
+
+  const handleNavigateToLogin = () => setCurrentPage('login');
+  const handleNavigateToForgotPassword = () => setCurrentPage('forgot-password');
+  const handleNavigateToSignup = () => setCurrentPage('signup-step1');
+  const handleNavigateBack = (target) => setCurrentPage(target || 'role-selection');
 
   return (
     <>
-      {currentPage === 'onboarding' && (
-        <OnboardingPage onNavigateToSignup={handleNavigateToSignup} onNavigateToLogin={handleNavigateToLogin} />
+      {currentPage === 'role-selection' && (
+        <RoleSelectionPage onRoleSelect={handleRoleSelect} />
       )}
-      {currentPage === 'signup' && (
-        <SignupPage 
-          onSignupComplete={handleSignupComplete} 
-          onNavigateToLogin={handleNavigateToLogin} 
-          onNavigateToGoogleLogin={handleNavigateToGoogleLogin}
+      {currentPage === 'signup-step1' && (
+        <SignupStep1Page
+          onNext={handleSignupStep1Complete}
+          onNavigateToLogin={handleNavigateToLogin}
+          initialData={step1Data}
+        />
+      )}
+      {currentPage === 'signup-step2' && (
+        <SignupStep2Page
+          step1Data={step1Data}
+          onSignupComplete={handleSignupStep2Complete}
+          onNavigateBack={() => setCurrentPage('signup-step1')}
         />
       )}
       {currentPage === 'email-verification' && (
-        <EmailVerificationPage
+        <EmailVerificationPageNew
           email={verificationEmail}
-          onVerifyCode={handleVerificationComplete}
-          onNavigateBack={handleNavigateToSignup}
+          onVerifyCode={handleEmailVerificationComplete}
+          onNavigateBack={() => setCurrentPage('signup-step1')}
+        />
+      )}
+      {currentPage === 'phone-verification' && (
+        <PhoneVerificationPageNew
+          phoneNumber={verificationEmail}
+          onVerifyCode={handlePhoneVerificationComplete}
+          onNavigateBack={() => setCurrentPage('signup-step1')}
         />
       )}
       {currentPage === 'login' && (
-        <LoginPage
+        <LoginPageNew
           onLoginComplete={handleLoginComplete}
           onNavigateToSignup={handleNavigateToSignup}
           onNavigateToForgotPassword={handleNavigateToForgotPassword}
-          onNavigateToGoogleLogin={handleNavigateToGoogleLogin}
-        />
-      )}
-      {currentPage === 'google-login' && (
-        <GoogleLoginPage
-          onLoginComplete={handleLoginComplete}
-          onNavigateToLogin={handleNavigateToLogin}
         />
       )}
       {currentPage === 'dashboard' && (
-        <DashboardPage onLogout={handleLogout} />
+        <DashboardPageNew onLogout={handleLogout} />
       )}
       {currentPage === 'forgot-password' && (
         <ForgotPasswordPage onNavigateToLogin={handleNavigateToLogin} />
