@@ -3,7 +3,10 @@ import { Logo } from '../../components/Auth/Logo';
 import { BrandPanel } from '../../components/Auth/BrandPanel';
 import { Input } from '../../components/Auth/Input';
 import { Button } from '../../components/Auth/Button';
-import { Lock } from 'lucide-react';
+// Icon components
+const LockIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+);
 
 export const SignupStep2Page = ({
   step1Data,
@@ -217,7 +220,7 @@ export const SignupStep2Page = ({
                   disabled
                   className="pr-10 bg-gray-100"
                 />
-                <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"><LockIcon /></div>
               </div>
             </div>
 
@@ -233,7 +236,7 @@ export const SignupStep2Page = ({
                   error={errors.confirmPassword}
                   className="pr-10"
                 />
-                <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"><LockIcon /></div>
               </div>
               {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
             </div>

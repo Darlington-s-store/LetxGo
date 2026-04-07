@@ -3,7 +3,14 @@ import { Logo } from '../../components/Auth/Logo';
 import { BrandPanel } from '../../components/Auth/BrandPanel';
 import { Input } from '../../components/Auth/Input';
 import { Button } from '../../components/Auth/Button';
-import { Mail, Lock } from 'lucide-react';
+// Icon components
+const MailIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+);
+
+const LockIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+);
 
 export const LoginPageNew = ({
   onLoginComplete,
@@ -79,7 +86,7 @@ export const LoginPageNew = ({
                   error={errors.email}
                   className="pr-10"
                 />
-                <Mail className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"><MailIcon /></div>
               </div>
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
@@ -96,7 +103,7 @@ export const LoginPageNew = ({
                   error={errors.password}
                   className="pr-10"
                 />
-                <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"><LockIcon /></div>
               </div>
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>

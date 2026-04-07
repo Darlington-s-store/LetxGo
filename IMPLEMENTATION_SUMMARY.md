@@ -143,8 +143,8 @@ src/
 └── main.jsx (unchanged)
 ```
 
-### Dependencies Added
-- `lucide-react` (^0.394.0) - Icon library for UI elements
+### Dependencies
+- All icons are implemented as inline SVG components (no external icon libraries required)
 
 ### Flow Diagram
 
@@ -179,7 +179,7 @@ Logout → Back to Role Selection
 - [ ] Logout clears all data and returns to role selection
 - [ ] Responsive design works on mobile devices
 - [ ] All form inputs have proper focus states
-- [ ] Icons render correctly from lucide-react
+  - [ ] Icons render correctly with inline SVG components
 
 ## Future Enhancements
 
@@ -213,4 +213,4 @@ Logout → Back to Role Selection
 - Dark navy color scheme (#1a1f2e) maintains throughout branding
 - All form interactions include loading states
 - Error messages are user-friendly and specific
-- Icons use lucide-react for consistency
+  - Icons use inline SVG components for lightweight implementation
